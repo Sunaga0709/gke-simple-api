@@ -1,0 +1,4 @@
+creation_rules:
+  - gcp_kms: "projects/gke-simple-api/locations/global/keyRings/sops-keyring/cryptoKeys/sops-key"
+    encrypted_regex: '(.+)'
+    path_regex: secrets/.*\.json

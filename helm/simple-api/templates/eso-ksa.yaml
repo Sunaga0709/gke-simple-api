@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: '{{ include "simple-api.fullname" . }}-eso-ksa'
+  namespace: external-secrets
+  annotations:
+    iam.gke.io/gcp-service-account: {{ .Values.eso.serviceAccount }}
