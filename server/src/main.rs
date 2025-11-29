@@ -101,6 +101,7 @@ async fn simple_handler(state: State<Arc<Handler>>) -> impl IntoResponse {
         sample_env: state.sample_env.clone(),
         sample_secret: state.sample_secret.clone(),
         start_at: state.start_at.clone(),
+        version: "v2".to_string(),
     })
 }
 
@@ -113,4 +114,5 @@ struct SimpleResponse {
     sample_env: String,
     sample_secret: String,
     start_at: String,
+    version: String,
 }
