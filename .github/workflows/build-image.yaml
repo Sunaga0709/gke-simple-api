@@ -81,11 +81,11 @@ jobs:
           IMAGE_TAG="${{ needs.build-push.outputs.image-tag }}"
           VALUES_FILE="./helm/simple-api/values.yaml"
 
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/lates/download/yq_linux_amd64
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod +x /usr/local/bin/yq
 
           echo "Update image.tag to $IMAGE_TAG in $VALUES_FILE"
-          yq -i "./image.tag = \"$IMAGE_TAG\"" "$VALUES_FILE"
+          yq -i ".image.tag = \"$IMAGE_TAG\"" "$VALUES_FILE"
 
           echo "Updated values.yaml:"
           cat "$VALUES_FILE"
