@@ -1,0 +1,20 @@
+apps:
+  simpleApi:
+    enabled: true
+    name: simple-api
+    project: default
+    source:
+      repoUrl: "https://github.com/Sunaga0709/gke-simple-api.git"
+      targetRevision: "main"
+      path: "helm/simple-api"
+      valueFiles:
+        - "values.yaml"
+    destination:
+      namespace: "simple-api"
+    syncPolicy:
+      automated:
+        enabled: true
+        prune: true
+        selfHeal: true
+      syncOptions:
+        - "CreateNamespace=true"

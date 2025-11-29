@@ -1,9 +1,12 @@
-name: Build image
+name: Build push image
 
 on:
   push:
     branches:
       - main
+    paths:
+      - "server/**"
+      - ".github/workflows/build-image.yaml"
 
 env:
   PROJECT_ID: gke-simple-api
@@ -13,12 +16,15 @@ env:
   SERVICE_ACCOUNT: "cicd-build@gke-simple-api.iam.gserviceaccount.com"
 
 jobs:
-  build:
+  build-push:
     runs-on: ubuntu-latest
 
     permissions:
       id-token: write
       contents: read
+
+    outputs:
+      image-tag: ${{ steps.vars.outputs.tag }}
 
     steps:
       - uses: actions/checkout@v4
@@ -59,3 +65,43 @@ jobs:
             ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  update-chart:
+    runs-on: ubuntu-latest
+    needs: build-push
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update helm image.tag
+        run: |
+          IMAGE_TAG="${{ needs.build-push.outputs.image-tag }}"
+          VALUES_FILE="./helm/simple-api/values.yaml"
+
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/lates/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+          echo "Update image.tag to $IMAGE_TAG in $VALUES_FILE"
+          yq -i "./image.tag = \"$IMAGE_TAG\"" "$VALUES_FILE"
+
+          echo "Updated values.yaml:"
+          cat "$VALUES_FILE"
+
+      - name: Commit and push changes
+        run: |
+          IMAGE_TAG=${{ needs.build-push.outputs.image-tag }}
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add ./helm/simple-api/values.yaml
+
+          if ! git diff --cached --quiet; then
+            git commit -m "Update image tag to ${IMAGE_TAG}"
+            git push origin HEAD:main
+          else
+            echo "No changes in values.yaml skip commit."
+          fi
