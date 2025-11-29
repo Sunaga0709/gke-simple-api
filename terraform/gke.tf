@@ -5,15 +5,16 @@ resource "google_project_service" "activate_gke" {
 }
 
 module "gke" {
-  source            = "terraform-google-modules/kubernetes-engine/google"
-  version           = "~> 41.0"
-  project_id        = local.project_id
-  name              = local.service_name
-  region            = local.region
-  network           = module.vpc.network_name
-  subnetwork        = "${local.service_name}-subnet"
-  ip_range_pods     = "gke-pods"
-  ip_range_services = "gke-services"
+  source              = "terraform-google-modules/kubernetes-engine/google"
+  version             = "~> 41.0"
+  project_id          = local.project_id
+  name                = local.service_name
+  region              = local.region
+  network             = module.vpc.network_name
+  subnetwork          = "${local.service_name}-subnet"
+  ip_range_pods       = "gke-pods"
+  ip_range_services   = "gke-services"
+  deletion_protection = false
 
   remove_default_node_pool = true
   # create_service_account   = false
