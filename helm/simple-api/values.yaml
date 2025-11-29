@@ -4,7 +4,7 @@ rollingUpdate:
   maxSurge: 1
 image:
   repository: asia-northeast1-docker.pkg.dev/gke-simple-api/simple-api/simple-api
-  tag: 07ee25d1f49edd4e07091c3873ff2faeaf6d0d06
+  tag: ddce6ded1ca25b02f934c779235a4a7b318dfc48
   pullPolicy: IfNotPresent
 service:
   type: ClusterIP
